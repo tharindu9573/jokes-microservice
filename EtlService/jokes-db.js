@@ -1,32 +1,25 @@
 const mysql = require('mysql');
 
-function connectWithRetry(){
-    const connection = mysql.createConnection({
-        host: 'mysql-db',
-        user: 'root',
-        password: 'diamondback',
-        database: 'Jokes'
-    });
+const connection = mysql.createConnection({
+    host: 'mysql-db',
+    user: 'root',
+    password: 'diamondback',
+    database: 'Jokes'
+});
 
-    connection.connect((err) => {
-        if (err) {
-            console.error('Error connecting to MySQL:', err.message);
-            console.log('Retrying connection in 5 seconds...');
-            setTimeout(connectWithRetry, 5000);
-        } else {
-            console.log('Connected to MySQL');
-        }
-    });
-
-    connection.on('error', (err) => {
-        console.error('MySQL connection error:', err.message);
-        connectWithRetry(); 
-    });
-
-    return connection;
+function connectDb(){
+    setTimeout(() => {
+        connection.connect(err => {
+            if (err) {
+                console.log(err.message);
+            } else {
+                console.log('Connected to MySQL database');
+            }
+        });
+    }, 45*1000);
 }
 
-const connection = connectWithRetry();
+connectDb();
 
 async function insertJoke({ category_id, joke_text }) {
     return new Promise((resolve, reject) => {
