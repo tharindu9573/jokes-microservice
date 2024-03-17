@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  kong-gw:
+    image: kong/kong-gateway:3.6.1.1
+    volumes:
+      - '${PWD}:/Users/tharindusenevirathna/Kong/'
+    environment:
+      KONG_DATABASE: 'off'
+      KONG_DECLARATIVE_CONFIG: '/Users/tharindusenevirathna/Kong/kong.yml'
+      KONG_PROXY_ACCESS_LOG: '/dev/stdout'
+      KONG_ADMIN_ACCESS_LOG: '/dev/stdout'
+      KONG_PROXY_ERROR_LOG: '/dev/stderr'
+      KONG_ADMIN_ERROR_LOG: '/dev/stderr'
+      KONG_ADMIN_LISTEN: '0.0.0.0:8001'
+      KONG_ADMIN_GUI_URL: 'http://localhost:8002' 
+    ports:
+      - '8000:8000'
+      - '8443:8443'
+      - '8001:8001'
+      - '8444:8444'
+      - '8002:8002'
+      - '8445:8445'
+      - '8003:8003'
+      - '8004:8004'
+    networks:
+      - default-network
+
+  joke-service:
+    image: joke-service:1.0.0
+    depends_on:
+      - mysql-db
+    networks:
+      - default-network
+
+  submitter-service:
+    image: submitter-service:1.0.0
+    networks:
+      - default-network
+
+  moderator-service:
+    image: moderator-service:1.0.0
+    depends_on:
+      - mysql-db
+    networks:
+      - default-network
+
+  analyze-service:
+    image: analyze-service:1.0.0
+    depends_on:
+      - mongo-db
+    networks:
+      - default-network
+
+  etl-service:
+    image: etl-service:1.0.0
+    depends_on:
+      - mysql-db
+      - mongo-db
+    networks:
+      - default-network
+
+  mysql-db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 'diamondback'
+    command: --default-authentication-plugin=mysql_native_password
+    depends_on:
+      - kong-gw
+    networks:
+      - default-network
+
+  mongo-db:
+    image: mongo
+    ports:
+      - '27017:27017'
+    networks:
+      - default-network
+
+  rabbbit-mq:
+    image: rabbitmq:3-management
+    ports:
+      - '8080:15672'
+      - '5672:5672'
+    networks:
+      - default-network
+      
+networks:
+  default-network:
+    driver: bridge
