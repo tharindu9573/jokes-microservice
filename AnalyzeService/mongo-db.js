@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const uri = 'mongodb://root:example@mongo:27017/';
+const uri = 'mongodb://root:example@mongo:27017/analyticsdb';
 
 setTimeout(() => {
     mongoose.connect(uri)
@@ -15,7 +15,7 @@ const schema = new mongoose.Schema({
 });
 
 const Log = mongoose.model('Logs', schema);
-``
+
 async function getAllLogs() {
     return await Log.find({});
 }
