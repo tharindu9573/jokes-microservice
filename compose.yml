@@ -77,11 +77,12 @@ services:
     networks:
       - default-network
 
-  mongo-db:
+  mongo:
     image: mongo
-    ports:
-      - '27017:27017'
-    restart: on-failure
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     networks:
       - default-network
 

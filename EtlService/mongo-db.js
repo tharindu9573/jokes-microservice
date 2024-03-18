@@ -1,32 +1,12 @@
 const mongoose = require('mongoose');
 
-const uri = 'mongodb://host.docker.internal:27017/logsanalyzedatabase';
+const uri = 'mongodb://root:example@mongo:27017/';
 
-function connectWithRetry() {
-    mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-        .then(() => {
-            console.log('Connected to MongoDB');
-        })
-        .catch((err) => {
-            console.error('Error connecting to MongoDB:', err.message);
-            console.log('Retrying connection in 5 seconds...');
-            setTimeout(connectWithRetry, 5000);
-        });
-
-    mongoose.connection.on('error', (err) => {
-        console.error('MongoDB connection error:', err.message);
-        console.log('Attempting to reconnect to MongoDB...');
-        setTimeout(connectWithRetry, 5000);
-    });
-
-    mongoose.connection.on('disconnected', () => {
-        console.log('MongoDB connection disconnected');
-        console.log('Attempting to reconnect to MongoDB...');
-        setTimeout(connectWithRetry, 5000);
-    });
-}
-
-//connectWithRetry();
+setTimeout(() => {
+    mongoose.connect(uri)
+        .then(() => console.log('Connected to MongoDB'))
+        .catch((err) => console.error('Error connecting to MongoDB:', err));
+}, 45*1000);
 
 const schema = new mongoose.Schema({
     log: String,
