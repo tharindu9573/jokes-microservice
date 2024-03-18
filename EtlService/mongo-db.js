@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const uri = 'mongodb://root:example@mongo:27017/analyticsdb';
+const uri = 'mongodb://root:example@mongo:27017/';
 
 setTimeout(() => {
     mongoose.connect(uri)

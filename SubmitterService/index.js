@@ -4,7 +4,7 @@ const amqp = require('amqplib');
 
 const port = 1000;
 
-const rabbitMQUrl = 'amqp://host.docker.internal:5672/';
+const rabbitMQUrl = 'amqp://52.142.45.4:5672/';
 const queueName = 'submitter_queue';
 
 app.use(express.json());

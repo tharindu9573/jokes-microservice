@@ -4,10 +4,10 @@ services:
   kong-gw:
     image: kong/kong-gateway:3.6.1.1
     volumes:
-      - '${PWD}:/Users/tharindusenevirathna/Kong/'
+      - '${PWD}:/home/OsAdmin/files'
     environment:
       KONG_DATABASE: 'off'
-      KONG_DECLARATIVE_CONFIG: '/Users/tharindusenevirathna/Kong/kong.yml'
+      KONG_DECLARATIVE_CONFIG: '/home/OsAdmin/files/kong.yml'
       KONG_PROXY_ACCESS_LOG: '/dev/stdout'
       KONG_ADMIN_ACCESS_LOG: '/dev/stdout'
       KONG_PROXY_ERROR_LOG: '/dev/stderr'

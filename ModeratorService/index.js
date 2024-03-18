@@ -5,7 +5,7 @@ const db = require('./jokes-db')
 const app = express();
 const port = 2000;
 
-const rabbitMQUrl = 'amqp://host.docker.internal:5672/';
+const rabbitMQUrl = 'amqp://52.142.45.4:5672/';
 const subscribeQueue = 'submitter_queue';
 const publishQueueApproved = 'etl_approved_queue';
 const publishQueueAnalyze = 'etl_analyze_queue';

@@ -6,7 +6,7 @@ const mongoDb = require('./mongo-db');
 const app = express();
 const port = 3000;
 
-const rabbitMQUrl = 'amqp://host.docker.internal:5672/';
+const rabbitMQUrl = 'amqp://52.142.45.4:5672/';
 const subscribeQueueApproved = 'etl_approved_queue';
 const subscribeQueueAnalyze = 'etl_analyze_queue';
 
