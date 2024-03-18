@@ -52,7 +52,7 @@ services:
   analyze-service:
     image: analyze-service:1.0.0
     depends_on:
-      - mongo-db
+      - mongo
     restart: on-failure
     networks:
       - default-network
@@ -61,7 +61,7 @@ services:
     image: etl-service:1.0.0
     depends_on:
       - mysql-db
-      - mongo-db
+      - mongo
     restart: on-failure
     networks:
       - default-network
