@@ -14,20 +14,23 @@ app.use(express.json());
 
 /**
  * @swagger
- * /api/users:
+ * /submit:
  *   post:
  *     summary: Submit new Joke
  *     tags: [Joke]
+ *     consumes: application/json
  *     parameters:
- *       - in: int
- *         name: type_id
- *         required: true
- *       - in: string
- *         name: joke_text
- *         required: true
- *       - in: string
- *         name: punch_line
- *         required: true
+ *       - in: body
+ *         name: body
+ *         schema:
+ *           type: object
+ *           properties:
+ *             type_id:
+ *               type: number
+ *             joke_text:
+ *               type: string
+ *             punch_line:
+ *               type: string 
  *     responses:
  *       200:
  *         description: New joke was submitted
