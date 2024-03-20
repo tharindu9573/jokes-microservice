@@ -1,18 +1,41 @@
 const express = require('express');
 const app = express();
 const amqp = require('amqplib');
+const swaggerUi = require('swagger-ui-express');
+const specs = require('./swagger.js');
 
 const port = 3200;
 
 const rabbitMQUrl = `amqp://${process.env.BASE_URL}:4201/`;;
 const queueName = 'submitter_queue';
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(express.json());
 
+/**
+ * @swagger
+ * /api/users:
+ *   post:
+ *     summary: Submit new Joke
+ *     tags: [Joke]
+ *     parameters:
+ *       - in: int
+ *         name: type_id
+ *         required: true
+ *       - in: string
+ *         name: joke_text
+ *         required: true
+ *       - in: string
+ *         name: punch_line
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: New joke was submitted
+ */
 app.post('/submit', (req, res) => {
     try {
-        var { category_id, joke_text } = req.body;
-        var jsonMessage = JSON.stringify({ category_id, joke_text });
+        var { type_id, joke_text, punch_line  } = req.body;
+        var jsonMessage = JSON.stringify({ type_id, joke_text, punch_line  });
         sendToQueue(jsonMessage);
         res.status(201).send("Joke was submitted");
     } catch (error) {
