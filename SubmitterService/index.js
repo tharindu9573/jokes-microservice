@@ -18,7 +18,10 @@ app.use(express.json());
  *   post:
  *     summary: Submit new Joke
  *     tags: [Joke]
- *     consumes: application/json
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
  *     parameters:
  *       - in: body
  *         name: body
