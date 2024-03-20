@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  submitter-service:
+    image: submitter-service:1.0.0
+    environment:
+      - BASE_URL='1.1.1.1'
+      - USERNAME='admin'
+      - PASSWORD='diamondback'
+    restart: on-failure
+    ports:
+      - '4200:3200'
+    networks:
+      - submitter-service-network
+
+  rabbbit-mq:
+    image: rabbitmq:3-management
+    ports:
+      - '4202:15672'
+      - '4201:5672'
+    restart: on-failure
+    networks:
+      - submitter-service-network
+      
+networks:
+  submitter-service-network:
+    driver: bridge

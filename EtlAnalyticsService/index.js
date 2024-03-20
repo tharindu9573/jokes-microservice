@@ -4,22 +4,10 @@ const jokesDb = require('./jokes-db')
 const mongoDb = require('./mongo-db');
 
 const app = express();
-const port = 3000;
+const port = 3301;
 
-const rabbitMQUrl = 'amqp://52.142.45.4:5672/';
-const subscribeQueueApproved = 'etl_approved_queue';
+const rabbitMQUrl = `amqp://${process.env.RMQ_MODERATOR_URL}:4101/`;
 const subscribeQueueAnalyze = 'etl_analyze_queue';
-
-async function consumeFromEtlApprovedQueue() {
-    try {
-        queue.consumeFromQueue(rabbitMQUrl, subscribeQueueApproved, async (message) => {
-            const jsonMessage = JSON.parse(message);
-            await jokesDb.insertJoke(jsonMessage);
-        });
-    } catch (error) {
-        console.error('Error consuming messages from Etl Approved Queue:', error);
-    }
-}
 
 async function consumeFromEtlAnalyzeQueue() {
     try {
@@ -37,6 +25,5 @@ async function consumeFromEtlAnalyzeQueue() {
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
-    consumeFromEtlApprovedQueue();
     consumeFromEtlAnalyzeQueue();
 });

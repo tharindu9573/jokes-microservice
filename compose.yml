@@ -25,76 +25,8 @@ services:
       - '8004:8004'
     restart: on-failure
     networks:
-      - default-network
-
-  joke-service:
-    image: joke-service:1.0.0
-    depends_on:
-      - mysql-db
-    restart: on-failure
-    networks:
-      - default-network
-
-  submitter-service:
-    image: submitter-service:1.0.0
-    restart: on-failure
-    networks:
-      - default-network
-
-  moderator-service:
-    image: moderator-service:1.0.0
-    depends_on:
-      - mysql-db
-    restart: on-failure
-    networks:
-      - default-network
-
-  analyze-service:
-    image: analyze-service:1.0.0
-    depends_on:
-      - mongo
-    restart: on-failure
-    networks:
-      - default-network
-
-  etl-service:
-    image: etl-service:1.0.0
-    depends_on:
-      - mysql-db
-      - mongo
-    restart: on-failure
-    networks:
-      - default-network
-
-  mysql-db:
-    image: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: 'diamondback'
-    command: --default-authentication-plugin=mysql_native_password
-    depends_on:
-      - kong-gw
-    restart: on-failure
-    networks:
-      - default-network
-
-  mongo:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    networks:
-      - default-network
-
-  rabbbit-mq:
-    image: rabbitmq:3-management
-    ports:
-      - '8080:15672'
-      - '5672:5672'
-    restart: on-failure
-    networks:
-      - default-network
+      - api-gw-network
       
 networks:
-  default-network:
+  api-gw-network:
     driver: bridge

@@ -1,8 +1,8 @@
 const express = require('express');
-const jokeDb = require('./jokes-db');
+const jokeDb = require('./mysql-db');
 
 const app = express();
-const port = 4000;
+const port = 3000;
 
 app.use(express.json());
 
@@ -67,7 +67,7 @@ app.get('/jokes/categories', async (req, res) => {
 app.get('/jokes/categories/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        let result = await jokeDb.getCategory(id);
+        let result = await jokeDb.gettype(id);
         res.status(200).send(result);
     } catch (error) {
         res.status(500).send(`An error occurred. Message: ${error.message}`);
@@ -75,9 +75,9 @@ app.get('/jokes/categories/:id', async (req, res) => {
 });
 
 app.post('/jokes/categories', async (req, res) => {
-    const category = req.body;
+    const type = req.body;
     try {
-        let result = await jokeDb.insertCategory(category);
+        let result = await jokeDb.inserttype(type);
         res.status(201).send(result);
     } catch (error) {
         res.status(500).send(`An error occurred. Message: ${error.message}`);
@@ -85,9 +85,9 @@ app.post('/jokes/categories', async (req, res) => {
 });
 
 app.put('/jokes/categories', async (req, res) => {
-    const category = req.body;
+    const type = req.body;
     try {
-        let result = await jokeDb.updateCategory(category);
+        let result = await jokeDb.updatetype(type);
         res.status(200).send(result);
     } catch (error) {
         res.status(500).send(`An error occurred. Message: ${error.message}`);
@@ -97,7 +97,7 @@ app.put('/jokes/categories', async (req, res) => {
 app.delete('/jokes/categories/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        let result = await jokeDb.deleteCategory(id);
+        let result = await jokeDb.deletetype(id);
         res.status(200).send(result);
     } catch (error) {
         res.status(500).send(`An error occurred. Message: ${error.message}`);

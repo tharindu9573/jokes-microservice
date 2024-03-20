@@ -1,11 +1,12 @@
 const express = require('express'); 
 const queue = require('./queue');
-const db = require('./jokes-db')
+const db = require('./mysql-db')
 
 const app = express();
-const port = 2000;
+const port = 3100;
 
-const rabbitMQUrl = 'amqp://52.142.45.4:5672/';
+const rabbitMQUrl_Submitter = `amqp://${process.env.RMQ_SUBMITTER_URL}:4201/`;
+const rabbitMQUrl_Moderator = `amqp://${process.env.RMQ_MODERATOR_URL}:4101/`;
 const subscribeQueue = 'submitter_queue';
 const publishQueueApproved = 'etl_approved_queue';
 const publishQueueAnalyze = 'etl_analyze_queue';
@@ -55,8 +56,8 @@ app.patch('/moderator/:id', async (req, res) => {
         const { id } = req.params;
         let result = await db.approveJoke(id);
         var approvedMessage = await db.getJoke(id);
-        await queue.sendToQueue(rabbitMQUrl, publishQueueApproved, JSON.stringify(approvedMessage));
-        await queue.sendToQueue(rabbitMQUrl, publishQueueAnalyze, JSON.stringify(approvedMessage));
+        await queue.sendToQueue(rabbitMQUrl_Moderator, publishQueueApproved, JSON.stringify(approvedMessage));
+        await queue.sendToQueue(rabbitMQUrl_Moderator, publishQueueAnalyze, JSON.stringify(approvedMessage));
         res.status(200).send(result);
     } catch (error) {
         res.status(500).send(`An error occurred. Message: ${error.message}`);
@@ -65,7 +66,7 @@ app.patch('/moderator/:id', async (req, res) => {
 
 function consumeFromSubmitterQueue() {
     try {
-        queue.consumeFromQueue(rabbitMQUrl, subscribeQueue, async (message) => {
+        queue.consumeFromQueue(rabbitMQUrl_Submitter, subscribeQueue, async (message) => {
             const jsonMessage = JSON.parse(message);
             db.insertJoke(jsonMessage).then(result => {
                 console.log(`Inserted to moderator jokes. result: ${result}`);

@@ -1,4 +1,4 @@
-CREATE TABLE category (
+CREATE TABLE type (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
     is_deleted BOOLEAN DEFAULT FALSE
@@ -7,7 +7,8 @@ CREATE TABLE category (
 CREATE TABLE joke (
     id INT AUTO_INCREMENT PRIMARY KEY,
     joke_text TEXT,
-    category_id INT,
+    type_id INT,
+    punch_line TEXT,
     is_deleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (category_id) REFERENCES category(id)
 );
@@ -15,7 +16,8 @@ CREATE TABLE joke (
 CREATE TABLE moderator_joke (
     id INT AUTO_INCREMENT PRIMARY KEY,
     joke_text TEXT,
-    category_id INT,
+    type_id INT,
+    punch_line TEXT,
     is_approved BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (category_id) REFERENCES category(id)
 );
