@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  joke-service:
+    image: joke-service:1.0.0
+    environment:
+      BASE_URL: '1.1.1.1'
+    depends_on:
+      - mysql-db
+    restart: on-failure
+    ports:
+      - '4000:3000'
+    networks:
+      - joke-service-network
+
+  joke-etl-service:
+    image: joke-etl-service:1.0.0
+    environment:
+      RMQ_URL: '1.1.1.1'
+    depends_on:
+      - mysql-db
+    restart: on-failure
+    ports:
+      - '4001:3001'
+    networks:
+      - joke-service-network
+
+  mysql-db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 'diamondback'
+    command: --default-authentication-plugin=mysql_native_password
+    restart: on-failure
+    ports:
+      - '4002:3306'
+    networks:
+      - joke-service-network
+      
+networks:
+  joke-service-network:
+    driver: bridge

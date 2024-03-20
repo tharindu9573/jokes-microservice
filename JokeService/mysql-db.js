@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 
 const connection = mysql.createConnection({
-    host: 'mysql-db',
+    host: `${process.env.BASE_URL}:4002`,
     user: 'root',
     password: 'diamondback',
     database: 'Jokes'
@@ -21,9 +21,9 @@ function connectDb(){
 
 connectDb();
 
-async function insertJoke({ category_id, joke_text }) {
+async function insertJoke({ type_id, joke_text, punch_line }) {
     return new Promise((resolve, reject) => {
-        connection.query('INSERT INTO joke (joke_text, category_id, is_deleted) VALUES (?, ?, ?)', [joke_text, category_id, false], (err, result) => {
+        connection.query('INSERT INTO joke (joke_text, punch_line, type_id, is_deleted) VALUES (?, ?, ?)', [joke_text, punch_line, type_id, false], (err, result) => {
             if (err) {
                 reject(err);
             } else {
@@ -69,9 +69,9 @@ async function deleteJoke(id) {
     });
 }
 
-async function updateJoke({ id, category_id, joke_text }) {
+async function updateJoke({ id, type_id, joke_text, punch_line }) {
     return new Promise((resolve, reject) => {
-        connection.query('UPDATE joke SET category_id = ?, joke_text = ? WHERE id = ?', [category_id, joke_text, id], (err, result) => {
+        connection.query('UPDATE joke SET type_id = ?, joke_text = ?, punch_line = ? WHERE id = ?', [type_id, joke_text, punch_line, id], (err, result) => {
             if (err) {
                 reject(err);
             } else {
@@ -81,9 +81,9 @@ async function updateJoke({ id, category_id, joke_text }) {
     });
 }
 
-async function insertCategory({ name }) {
+async function inserttype({ name }) {
     return new Promise((resolve, reject) => {
-        connection.query('INSERT INTO category (name) VALUES (?)', name, (err, result) => {
+        connection.query('INSERT INTO type (name) VALUES (?)', name, (err, result) => {
             if (err) {
                 reject(err);
             } else {
@@ -93,9 +93,9 @@ async function insertCategory({ name }) {
     });
 }
 
-async function getCategory(id) {
+async function gettype(id) {
     return new Promise((resolve, reject) => {
-        connection.query('SELECT * FROM category WHERE Id = ? AND is_deleted = ? LIMIT 0, 1', [id, false], (err, result) => {
+        connection.query('SELECT * FROM type WHERE Id = ? AND is_deleted = ? LIMIT 0, 1', [id, false], (err, result) => {
             if (err) {
                 reject(err);
             } else {
@@ -107,7 +107,7 @@ async function getCategory(id) {
 
 async function getAllCategories() {
     return new Promise((resolve, reject) => {
-        connection.query('SELECT * FROM  category WHERE is_deleted = ?', false, (err, result) => {
+        connection.query('SELECT * FROM  type WHERE is_deleted = ?', false, (err, result) => {
             if (err) {
                 reject(err);
             } else {
@@ -117,9 +117,9 @@ async function getAllCategories() {
     });
 }
 
-async function deleteCategory(id) {
+async function deletetype(id) {
     return new Promise((resolve, reject) => {
-        connection.query('UPDATE category SET is_deleted = ? WHERE id = ?', [true, id], (err, result) => {
+        connection.query('UPDATE type SET is_deleted = ? WHERE id = ?', [true, id], (err, result) => {
             if (err) {
                 reject(err);
             } else {
@@ -129,9 +129,9 @@ async function deleteCategory(id) {
     });
 }
 
-async function updateCategory({ id, name }) {
+async function updatetype({ id, name }) {
     return new Promise((resolve, reject) => {
-        connection.query('UPDATE category SET name = ? WHERE id = ?', [name, id], (err, result) => {
+        connection.query('UPDATE type SET name = ? WHERE id = ?', [name, id], (err, result) => {
             if (err) {
                 reject(err);
             } else {
@@ -147,9 +147,9 @@ module.exports = {
     getAllJoke,
     getJoke,
     deleteJoke,
-    insertCategory,
-    updateCategory,
-    getCategory,
+    inserttype,
+    updatetype,
+    gettype,
     getAllCategories,
-    deleteCategory
+    deletetype
 }

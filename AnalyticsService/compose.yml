@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  analyze-service:
+    image: analyze-service:1.0.0
+    environment:
+      BASE_URL: '1.1.1.1'
+    depends_on:
+      - mongo
+    restart: on-failure
+    ports:
+      - '4300:3300'
+    networks:
+      - analytics-service-network
+
+  analytics-etl-service:
+    image: etl-service:1.0.0
+    environment:
+      - BASE_URL='1.1.1.1'
+      - RMQ_URL:'1.1.1.1'
+    depends_on:
+      - mongo
+    restart: on-failure
+    ports:
+      - '4302:27017'
+    networks:
+      - analytics-service-network
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - '4301:3301'
+    networks:
+      - analytics-service-network
+      
+networks:
+  analytics-service-network:
+    driver: bridge

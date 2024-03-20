@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  moderator-service:
+    image: moderator-service:1.0.0
+    environment:
+      RMQ_SUBMITTER_URL: '1.1.1.1'
+      RMQ_MODERATOR_URL: '1.1.1.1'
+    depends_on:
+      - mysql-db
+    restart: on-failure
+    ports:
+      - '4100:3100'
+    networks:
+      - moderator-service-network
+
+  mysql-db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 'diamondback'
+    command: --default-authentication-plugin=mysql_native_password
+    restart: on-failure
+    networks:
+      - moderator-service-network
+
+  rabbbit-mq:
+    image: rabbitmq:3-management
+    ports:
+      - '4102:15672'
+      - '4101:5672'
+    restart: on-failure
+    networks:
+      - moderator-service-network
+      
+networks:
+  moderator-service-network:
+    driver: bridge

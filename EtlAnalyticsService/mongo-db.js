@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const uri = 'mongodb://root:example@mongo:27017/';
+const uri = `mongodb://root:example@${process.env.BASE_URL}:4302/`;
 
 setTimeout(() => {
     mongoose.connect(uri)
@@ -16,10 +16,12 @@ const schema = new mongoose.Schema({
 
 const Log = mongoose.model('Logs', schema);
 
-async function getAllLogs() {
-    return await Log.find({});
+async function addNewLog(log) {
+    const newLog = new Log(log);
+    console.log(newLog);
+    await newLog.save();
 }
 
 module.exports = {
-    getAllLogs
+    addNewLog
 }

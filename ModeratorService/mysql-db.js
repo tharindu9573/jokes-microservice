@@ -21,9 +21,9 @@ function connectDb(){
 
 connectDb();
 
-async function insertJoke({ category_id, joke_text }) {
+async function insertJoke({ type_id, joke_text, punch_line }) {
     return new Promise((resolve, reject) => {
-        connection.query('INSERT INTO moderator_joke (joke_text, category_id, is_approved) VALUES (?, ?, ?)', [joke_text, category_id, false], (err, result) => {
+        connection.query('INSERT INTO moderator_joke (joke_text, punch_line, type_id, is_approved) VALUES (?, ?, ?, ?)', [joke_text, punch_line, type_id, false], (err, result) => {
             if (err) {
                 reject(err);
             } else {
@@ -69,9 +69,9 @@ async function deleteJoke(id) {
     });
 }
 
-async function updateJoke({ id, category_id, joke_text }) {
+async function updateJoke({ id, type_id, joke_text }) {
     return new Promise((resolve, reject) => {
-        connection.query('UPDATE moderator_joke SET category_id = ?, joke_text = ? WHERE id = ?', [category_id, joke_text, id], (err, result) => {
+        connection.query('UPDATE moderator_joke SET type_id = ?, joke_text = ?, punch_line = ? WHERE id = ?', [type_id, joke_text, punch_line, id], (err, result) => {
             if (err) {
                 reject(err);
             } else {

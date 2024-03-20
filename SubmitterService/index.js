@@ -2,9 +2,9 @@ const express = require('express');
 const app = express();
 const amqp = require('amqplib');
 
-const port = 1000;
+const port = 3200;
 
-const rabbitMQUrl = 'amqp://52.142.45.4:5672/';
+const rabbitMQUrl = `amqp://${process.env.BASE_URL}:4201/`;;
 const queueName = 'submitter_queue';
 
 app.use(express.json());

@@ -2,7 +2,7 @@ ARG BASE_URL
 
 FROM node:slim
 
-ENV BASE_URL=$BASE_URL
+ENV MONGO_URL=$BASE_URL
 ENV NODE_ENV development
 
 WORKDIR /express-docker
@@ -13,4 +13,4 @@ RUN npm install
 
 CMD ["npm", "start"]
 
-EXPOSE 3200
+EXPOSE 3300

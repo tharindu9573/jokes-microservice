@@ -1,4 +1,5 @@
 node_modules
+compose.yml
 npm-debug.log
 build
 .git

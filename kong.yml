@@ -12,7 +12,7 @@ services:
     - /mock
     strip_path: true
 
-- host: joke-service
+- host: '1.1.1.1'
   name: joke_service
   port: 4000
   protocol: http
@@ -23,9 +23,9 @@ services:
     - /jokes
     strip_path: true
 
-- host: submitter-service
+- host: '1.1.1.1'
   name: submitter_service
-  port: 1000
+  port: 4200
   protocol: http
   path: /submit
   routes:
@@ -34,9 +34,9 @@ services:
     - /submit
     strip_path: true
 
-- host: moderator-service
+- host: '1.1.1.1'
   name: moderator_service
-  port: 2000
+  port: 4100
   protocol: http
   path: /moderator
   routes:
@@ -45,13 +45,13 @@ services:
     - /moderator
     strip_path: true
 
-- host: analyze-service
-  name: analyze_service
-  port: 5500
+- host: '1.1.1.1'
+  name: analytics_service
+  port: 3300
   protocol: http
   path: /logs
   routes:
-  - name: analyze-service
+  - name: analytics-service
     paths:
     - /logs
     strip_path: true

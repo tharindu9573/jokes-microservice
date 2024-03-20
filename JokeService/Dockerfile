@@ -1,5 +1,8 @@
+ARG BASE_URL
+
 FROM node:slim
 
+ENV BASE_URL=$BASE_URL
 ENV NODE_ENV development
 
 WORKDIR /express-docker
@@ -10,4 +13,4 @@ RUN npm install
 
 CMD ["npm", "start"]
 
-EXPOSE 4000
+EXPOSE 3000
