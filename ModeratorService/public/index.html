@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderate Joke</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="jokeCentral">
+        <h1>Moderate Joke</h1>
+        <div class="jokeSelector">
+            <label for="jokeType">Choose a joke type:</label>
+            <select id="jokeType" name="jokeType">
+                <option value="general">general</option>
+                <!-- More options can be added here -->
+            </select>
+            <button id="addJokeType">Add New Type</button>
+        </div>
+        <div class="jokeInput">
+            <input type="text" id="jokeSetup" placeholder="Moderate the joke setup text">
+            <input type="text" id="jokePunchline" placeholder="Moderate the joke punchline">
+        </div>
+        <div class="jokeActions">
+            <button id="submitJoke">Submit Joke</button>
+            <button id="deleteJoke">Delete Joke</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

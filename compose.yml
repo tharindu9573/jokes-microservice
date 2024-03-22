@@ -4,10 +4,10 @@ services:
   kong-gw:
     image: kong/kong-gateway:3.6.1.1
     volumes:
-      - '${PWD}:/home/OsAdmin/files'
+      - '${PWD}:/home/OsAdmin/project'
     environment:
       KONG_DATABASE: 'off'
-      KONG_DECLARATIVE_CONFIG: '/home/OsAdmin/files/kong.yml'
+      KONG_DECLARATIVE_CONFIG: '/home/OsAdmin/project/kong.yml'
       KONG_PROXY_ACCESS_LOG: '/dev/stdout'
       KONG_ADMIN_ACCESS_LOG: '/dev/stdout'
       KONG_PROXY_ERROR_LOG: '/dev/stderr'
@@ -15,7 +15,7 @@ services:
       KONG_ADMIN_LISTEN: '0.0.0.0:8001'
       KONG_ADMIN_GUI_URL: 'http://localhost:8002' 
     ports:
-      - '8000:8000'
+      - '80:8000'
       - '8443:8443'
       - '8001:8001'
       - '8444:8444'

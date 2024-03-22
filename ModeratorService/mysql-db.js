@@ -1,22 +1,35 @@
+const scheme = require('./scheme');
 const mysql = require('mysql');
 
-const connection = mysql.createConnection({
-    host: 'mysql-db',
+let connection = mysql.createConnection({
+    host: `${process.env.MYSQL_URL}`,
     user: 'root',
-    password: 'diamondback',
-    database: 'Jokes'
+    password: `${process.env.MYSQL_ROOT_PASSWORD}`,
+    // port: process.env.MYSQL_CONTAINER_PORT
 });
 
-function connectDb(){
+function connectDb() {
     setTimeout(() => {
-        connection.connect(err => {
-            if (err) {
-                console.log(err.message);
-            } else {
-                console.log('Connected to MySQL database');
+        scheme.createScheme().then((res) => {
+            if (res) {
+                connection = mysql.createConnection({
+                    host: `${process.env.MYSQL_URL}`,
+                    user: 'root',
+                    password: `${process.env.MYSQL_ROOT_PASSWORD}`,
+                    database: 'Jokes',
+                    // port: process.env.MYSQL_CONTAINER_PORT
+                });
+
+                connection.connect(err => {
+                    if (err) {
+                        console.log(err.message);
+                    } else {
+                        console.log('MODERATOR SERVICE: Connected to MySQL database');
+                    }
+                });
             }
         });
-    }, 45*1000);
+    }, 45 * 1000);
 }
 
 connectDb();

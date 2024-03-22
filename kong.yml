@@ -4,7 +4,7 @@ _transform: true
 services:
 - host: httpbin.org
   name: example_service
-  port: 80
+  port: 8050
   protocol: http
   routes:
   - name: example_route
@@ -12,18 +12,24 @@ services:
     - /mock
     strip_path: true
 
-- host: '1.1.1.1'
+- host: '52.170.117.195'
   name: joke_service
   port: 4000
   protocol: http
-  path: /jokes
+  path: "/"
   routes:
-  - name: joke-service
+  - name: joke-route
     paths:
-    - /jokes
-    strip_path: true
+      - /jokes
+    preserve_host: false
+    strip_path: false
+  - name: type-route
+    paths:
+      - /types
+    preserve_host: false
+    strip_path: false
 
-- host: '1.1.1.1'
+- host: '20.186.38.219'
   name: submitter_service
   port: 4200
   protocol: http
@@ -34,20 +40,26 @@ services:
     - /submit
     strip_path: true
 
-- host: '1.1.1.1'
+- host: '20.186.39.3'
   name: moderator_service
   port: 4100
   protocol: http
-  path: /moderator
+  path: "/"
   routes:
-  - name: moderator-service
+  - name: moderator-route
     paths:
     - /moderator
-    strip_path: true
+    preserve_host: false
+    strip_path: false
+  - name: login-route
+    paths:
+    - /login
+    preserve_host: false
+    strip_path: false
 
-- host: '1.1.1.1'
+- host: '52.171.220.101'
   name: analytics_service
-  port: 3300
+  port: 4300
   protocol: http
   path: /logs
   routes:

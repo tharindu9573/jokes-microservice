@@ -1,19 +1,18 @@
-const express = require('express'); 
+const express = require('express');
 const queue = require('./queue');
-const jokesDb = require('./jokes-db')
 const mongoDb = require('./mongo-db');
 
 const app = express();
-const port = 3301;
+const port = process.env.PORT || 3301;
 
-const rabbitMQUrl = `amqp://${process.env.RMQ_MODERATOR_URL}:4101/`;
-const subscribeQueueAnalyze = 'etl_analyze_queue';
+const rabbitMQUrl = `amqp://${process.env.RMQ_URL}:${process.env.MOD_CONTAINER_PORT}/`; //4101
+const subscribeQueueAnalyze = process.env.AN_QUEUE_NAME;
 
 async function consumeFromEtlAnalyzeQueue() {
     try {
         queue.consumeFromQueue(rabbitMQUrl, subscribeQueueAnalyze, async (message) => {
             await mongoDb.addNewLog({
-                log: 'New Joke Insertion after the approvel',
+                log: 'New Joke Insertion after the approval',
                 parameters: message,
                 time: new Date().getTime()
             })

@@ -3,93 +3,127 @@ const app = express();
 const amqp = require('amqplib');
 const swaggerUi = require('swagger-ui-express');
 const specs = require('./swagger.js');
-const authenticateJWT = require('./middleware.js');
-const jwt = require('jsonwebtoken');
+const path = require('path');
+const axios = require('axios')
+const cors = require('cors');
+const fs = require('fs').promises;
 
-const port = 3200;
+const GW_URL = `http://${process.env.GW_URL}:${process.env.GW_PROT}`; // 80
+const rabbitMQUrl = `amqp://${process.env.BASE_URL}:${process.env.SM_CONTAINER_PORT}/`; //4201
+const queueName = process.env.SM_QUEUE_NAME;
+const port = process.env.PORT || 3200;
 
-const rabbitMQUrl = `amqp://${process.env.BASE_URL}:4201/`;;
-const queueName = 'submitter_queue';
-const secret = 'mysupersecret'
+app.use(cors());
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use('/submit', express.static(path.join(__dirname, 'public')))
+app.use('/submit/index.html', express.static(path.join(__dirname, 'public')))
+
+app.use('/submit/docs', swaggerUi.serve, swaggerUi.setup(specs));
+
 app.use(express.json());
 
 /**
  * @swagger
  * /submit:
  *   post:
- *     summary: Submit new Joke
- *     tags: [Joke]
- *     consumes:
- *       - application/json
- *     produces:
- *       - application/json
- *     parameters:
- *       - in: body
- *         name: body
- *         schema:
- *           type: object
- *           properties:
- *             type_id:
- *               type: number
- *             joke_text:
- *               type: string
- *             punch_line:
- *               type: string 
+ *     summary: Submits a new joke
+ *     description: Accepts a joke with a type, text, and punchline, then queues it for processing.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type_id:
+ *                 type: integer
+ *                 example: 0
+ *                 description: The ID of the joke type
+ *               joke_text:
+ *                 type: string
+ *                 example: "string"
+ *                 description: The main text of the joke
+ *               punch_line:
+ *                 type: string
+ *                 example: "string"
+ *                 description: The punch line of the joke
  *     responses:
- *       200:
- *         description: New joke was submitted
+ *       '201':
+ *         description: Joke was submitted
+ *       '500':
+ *         description: An error occurred while submitting the joke
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: "An error was occurred while submitting the joke. Error: Error details"
  */
-app.post('/submit', authenticateJWT, (req, res) => {
+app.post('/submit', (req, res) => {
     try {
-        var { type_id, joke_text, punch_line  } = req.body;
-        var jsonMessage = JSON.stringify({ type_id, joke_text, punch_line  });
+        let { type_id, joke_text, punch_line } = req.body;
+        let jsonMessage = JSON.stringify({ type_id, joke_text, punch_line });
         sendToQueue(jsonMessage);
         res.status(201).send("Joke was submitted");
     } catch (error) {
-        res.status(500).send(`An error was occured while submitting the joke. Error: ${error.message}`);
+        res.status(500).send(`An error was occurred while submitting the joke. Error: ${error.message}`);
     }
 });
 
 /**
  * @swagger
- * /login:
- *   post:
- *     summary: Login user
- *     tags: [Auth]
- *     consumes:
- *       - application/json
- *     produces:
- *       - application/json
- *     parameters:
- *       - in: body
- *         name: body
- *         schema:
- *           type: object
- *           properties:
- *             username:
- *               type: string
- *             password:
- *               type: string 
+ * /submit/types:
+ *   get:
+ *     summary: Retrieves joke types
+ *     description: Fetches joke types from an external service, or from a local file as a fallback.
  *     responses:
- *       200:
- *         description: Authenticated
+ *       '200':
+ *         description: A JSON array of joke types
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/JokeType'
+ *       '500':
+ *         description: Error message indicating the failure of retrieving joke types
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ * components:
+ *   schemas:
+ *     JokeType:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 0
+ *           description: Unique identifier for the joke type
+ *         name:
+ *           type: string
+ *           example: "string"
+ *           description: Name of the joke type
+ *         is_deleted:
+ *           type: boolean
+ *           example: false
+ *           description: Indicates whether the joke type is deleted (0 for false, 1 for true)
  */
-app.post('/login', (req, res) => {
-    const {username, password} = req.body;
-    if(username === process.env.USERNAME && password === process.env.PASSWORD){
-        const token = jwt.sign({ userId: username }, secret, { expiresIn: '1h' });
-        res.status(200).send(token);
-    }
-    else{
-        res.status(401).send('Unauthorized');
+app.get('/submit/types', async (req, res) => {
+    try {
+        const response = await axios.get(`${GW_URL}/type`)
+        writeToFile(response.data);
+        res.status(200).send(await response.data);
+    } catch (error) {
+        const types = await readFromFile();
+
+        if (types.length > 0) {
+            res.status(200).send(types);
+        } else {
+            res.status(500).send(`An error was occurred while retrieving types. Error: ${error.message}`);
+        }
     }
 });
 
-app.use((err, req, res, next) => {
-    res.status(500).send('An error occurred. Please try again later.');
-});
 
 async function sendToQueue(message) {
     try {
@@ -105,6 +139,26 @@ async function sendToQueue(message) {
     }
 }
 
+function writeToFile(data) {
+    const filePth = path.join(__dirname, 'backup', 'types.json');
+    fs.writeFile(filePth, JSON.stringify(data, null, 2), (err) => {
+        if (err) {
+            console.error('Error writing file:', err);
+        }
+    });
+}
+
+async function readFromFile() {
+    const filePath = path.join(__dirname, 'backup', 'types.json');
+    try {
+        const data = await fs.readFile(filePath, 'utf8');
+        return JSON.parse(data);
+    } catch (err) {
+        console.error('Error reading file:', err);
+        return [];
+    }
+}
+
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`); 
+    console.log(`Server is running on port ${port}`);
 });

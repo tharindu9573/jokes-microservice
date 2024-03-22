@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit a Joke</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="jokeForm">
+        <div class="from" id="jokeForm">
+            <h1>Submit a Joke</h1>
+            <div class="jokeType">
+                <label for="jokeType">Choose a joke type:</label>
+                <select id="jokeType" name="jokeType">
+                    <option value="0">Any</option>
+                    <!-- More options can be added here -->
+                </select>
+                <p id="errorJokeType">Please select a joke type</p>
+            </div>
+            <p id="noTypes" class="noTypes">No joke types available at the moment</p>
+
+            <div class="group" id="text">
+                <label for="jokeText">Enter the joke setup text</label>
+                <input type="text" id="jokeText" placeholder="new joke">
+                <p id="errorJokeText">Please enter a joke</p>
+            </div>
+
+            <div class="group" id="punchline">
+                <label for="jokePunchline">Enter the joke punchline</label>
+                <input type="text" id="jokePunchline" placeholder="new punchy">
+                <p id="errorJokePunchline">Please enter a joke punchline</p>
+            </div>
+
+            <button id="submitJoke">Submit Joke</button>
+        </div>
+        <button id="submitNewJoke" class="submitNewJoke">Submit Another Joke</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

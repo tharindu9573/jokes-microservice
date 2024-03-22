@@ -4,7 +4,10 @@ services:
   analyze-service:
     image: analyze-service:1.0.0
     environment:
-      BASE_URL: '1.1.1.1'
+      BASE_URL: '52.171.220.101' # analytics ip
+      MONGO_ROOT_PASSWORD: 'diamondback'
+      MONGO_CONTAINER_PORT: 4302
+      PORT: 3300
     depends_on:
       - mongo
     restart: on-failure
@@ -16,13 +19,18 @@ services:
   analytics-etl-service:
     image: etl-service:1.0.0
     environment:
-      - BASE_URL='1.1.1.1'
-      - RMQ_URL:'1.1.1.1'
+      BASE_URL: '52.171.220.101' # analytics ip
+      RMQ_URL: '20.186.39.3' # moderator ip
+      MONGO_ROOT_PASSWORD: 'diamondback'
+      MONGO_CONTAINER_PORT: 4302
+      MOD_CONTAINER_PORT: 4101
+      AN_QUEUE_NAME: 'LOGGED_JOKES_QUEUE'
+      PORT: 3301
     depends_on:
       - mongo
     restart: on-failure
     ports:
-      - '4302:27017'
+      - '4301:3301'
     networks:
       - analytics-service-network
 
@@ -31,12 +39,12 @@ services:
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_PASSWORD: diamondback
     ports:
-      - '4301:3301'
+      - '4302:27017'
     networks:
       - analytics-service-network
-      
+
 networks:
   analytics-service-network:
     driver: bridge

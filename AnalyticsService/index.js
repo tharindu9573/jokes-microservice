@@ -2,7 +2,7 @@ const express = require('express');
 const mongoDb = require('./mongo-db');
 
 const app = express();
-const port = 3300;
+const port = process.env.PORT || 3300;
 
 app.get('/logs', (req, res) => {
     try {

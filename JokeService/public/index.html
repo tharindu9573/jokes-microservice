@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joke Central</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="jokeCentral">
+        <h1>Joke Central</h1>
+        <div class="jokeSelector">
+            <label for="jokeType">Choose a joke type:</label>
+            <select id="jokeType" name="jokeType">
+                <option value="0">any</option>
+            </select>
+        </div>
+        <button id="getJoke">Get Joke</button>
+        <div class="jokeDisplay" id="jokeDisplay">
+            <p class="joke" id="jokeText">a joke</p>
+            <p class="punchline" id="jokePunchline">a punchline</p>
+        </div>
+        <div class="anySelect error" id="anySelect">
+            <p>Doh! I chose 'any' by mistake</p>
+        </div>
+        <div class="noJokes error" id="noJokes">
+            <p>No jokes available at the moment</p>
+        </div>
+        <div class="noTypes error" id="noTypes">
+            <p>No joke types available at the moment</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

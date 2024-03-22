@@ -1,25 +1,41 @@
-const mysql = require('mysql');
+const scheme = require('./scheme');
+const mysql = require('mysql2');
 
-const connection = mysql.createConnection({
-    host: `${process.env.BASE_URL}:4002`,
+let connection = mysql.createConnection({
+    host: `${process.env.BASE_URL}`,
     user: 'root',
-    password: 'diamondback',
-    database: 'Jokes'
+    password: `${process.env.MYSQL_ROOT_PASSWORD}`,
+    port: process.env.MYSQL_CONTAINER_PORT
 });
 
-function connectDb(){
+
+function connectDb() {
     setTimeout(() => {
-        connection.connect(err => {
-            if (err) {
-                console.log(err.message);
-            } else {
-                console.log('Connected to MySQL database');
+        scheme.createScheme().then((res) => {
+            if (res) {
+                connection = mysql.createConnection({
+                    host: `${process.env.BASE_URL}`,
+                    user: 'root',
+                    password: `${process.env.MYSQL_ROOT_PASSWORD}`,
+                    database: 'Jokes',
+                    port: process.env.MYSQL_CONTAINER_PORT
+                });
+
+                connection.connect(err => {
+                    if (err) {
+                        console.log(err.message);
+                    } else {
+                        console.log('JOKE SERVICE: Connected to MySQL database');
+                    }
+                });
             }
         });
-    }, 45*1000);
+    }, 45 * 1000);
 }
 
+
 connectDb();
+
 
 async function insertJoke({ type_id, joke_text, punch_line }) {
     return new Promise((resolve, reject) => {
@@ -81,7 +97,62 @@ async function updateJoke({ id, type_id, joke_text, punch_line }) {
     });
 }
 
-async function inserttype({ name }) {
+async function getJokeByTypeId(id) {
+    return new Promise((resolve, reject) => {
+        connection.query('SELECT * FROM joke WHERE type_id = ? AND is_deleted = ? ORDER BY RAND() LIMIT 0, 1', [id, false], (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result[0]);
+            }
+        });
+    });
+}
+
+async function getJokeByTypeAndCount(type, count) {
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT joke.* FROM joke
+        JOIN type ON joke.type_id = type.id
+        WHERE LOWER(type.name) = LOWER(?) AND joke.is_deleted = ?
+        ORDER BY RAND()
+        LIMIT ${parseInt(count)}`, [type, false], (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+async function getJokeByCount(count) {
+    return new Promise((resolve, reject) => {
+        connection.query(` SELECT * FROM joke WHERE joke.is_deleted = ? ORDER BY RAND() LIMIT ${parseInt(count)}`, [false], (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+async function getJokeByType(type) {
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT joke.* FROM joke
+        JOIN type ON joke.type_id = type.id
+        WHERE LOWER(type.name) = LOWER(?) AND joke.is_deleted = ?
+        ORDER BY RAND() LIMIT 0, 1`, [type, false], (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result[0]);
+            }
+        });
+    });
+}
+
+async function insertType({ name }) {
     return new Promise((resolve, reject) => {
         connection.query('INSERT INTO type (name) VALUES (?)', name, (err, result) => {
             if (err) {
@@ -93,7 +164,7 @@ async function inserttype({ name }) {
     });
 }
 
-async function gettype(id) {
+async function getType(id) {
     return new Promise((resolve, reject) => {
         connection.query('SELECT * FROM type WHERE Id = ? AND is_deleted = ? LIMIT 0, 1', [id, false], (err, result) => {
             if (err) {
@@ -105,7 +176,7 @@ async function gettype(id) {
     });
 }
 
-async function getAllCategories() {
+async function getAllTypes() {
     return new Promise((resolve, reject) => {
         connection.query('SELECT * FROM  type WHERE is_deleted = ?', false, (err, result) => {
             if (err) {
@@ -117,7 +188,7 @@ async function getAllCategories() {
     });
 }
 
-async function deletetype(id) {
+async function deleteType(id) {
     return new Promise((resolve, reject) => {
         connection.query('UPDATE type SET is_deleted = ? WHERE id = ?', [true, id], (err, result) => {
             if (err) {
@@ -129,7 +200,7 @@ async function deletetype(id) {
     });
 }
 
-async function updatetype({ id, name }) {
+async function updateType({ id, name }) {
     return new Promise((resolve, reject) => {
         connection.query('UPDATE type SET name = ? WHERE id = ?', [name, id], (err, result) => {
             if (err) {
@@ -147,9 +218,13 @@ module.exports = {
     getAllJoke,
     getJoke,
     deleteJoke,
-    inserttype,
-    updatetype,
-    gettype,
-    getAllCategories,
-    deletetype
+    getJokeByType,
+    getJokeByTypeAndCount,
+    getJokeByCount,
+    getJokeByTypeId,
+    insertType,
+    updateType,
+    getType,
+    getAllTypes,
+    deleteType
 }

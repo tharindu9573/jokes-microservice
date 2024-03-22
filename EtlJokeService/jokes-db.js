@@ -1,29 +1,30 @@
 const mysql = require('mysql');
 
 const connection = mysql.createConnection({
-    host: `${process.env.BASE_URL}:4002`,
+    host: `${process.env.BASE_URL}`,
     user: 'root',
-    password: 'diamondback',
-    database: 'Jokes'
+    password: `${process.env.MYSQL_ROOT_PASSWORD}`,
+    database: 'Jokes',
+    port: process.env.MYSQL_CONTAINER_PORT
 });
 
-function connectDb(){
+function connectDb() {
     setTimeout(() => {
         connection.connect(err => {
             if (err) {
                 console.log(err.message);
             } else {
-                console.log('Connected to MySQL database');
+                console.log('ETL JOKE SERVICE: Connected to MySQL database');
             }
         });
-    }, 45*1000);
+    }, 60 * 1000);
 }
 
 connectDb();
 
-async function insertJoke({ category_id, joke_text }) {
+async function insertJoke({ type_id, joke_text, punch_line }) {
     return new Promise((resolve, reject) => {
-        connection.query('INSERT INTO joke (joke_text, category_id, is_deleted) VALUES (?, ?, ?)', [joke_text, category_id, false], (err, result) => {
+        connection.query('INSERT INTO joke (joke_text, punch_line, type_id, is_deleted) VALUES (?, ?, ?)', [joke_text, punch_line, type_id, false], (err, result) => {
             if (err) {
                 reject(err);
             } else {

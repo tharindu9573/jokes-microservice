@@ -1,8 +1,7 @@
 const jwt = require('express-jwt');
-const secret = 'mysupersecret'
 
 const authenticateJWT = jwt.expressjwt({
-    secret: secret,
+    secret: process.env.JWT_SECRET || 'secret',
     algorithms: ['HS256']
 });
 

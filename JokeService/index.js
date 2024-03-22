@@ -1,15 +1,36 @@
 const express = require('express');
 const jokeDb = require('./mysql-db');
+const path = require('path');
+const cors = require('cors');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
+app.use(cors());
+
+app.use('/jokes/index.html', express.static(path.join(__dirname, 'public')))
 
 app.use(express.json());
 
+//jokes endpoints
 app.get('/jokes', async (req, res) => {
+    const { type, count } = req.query;
     try {
-        let result = await jokeDb.getAllJoke();
-        res.status(200).send(result);
+        if (type && count) {
+            let result = await jokeDb.getJokeByTypeAndCount(type, count);
+            res.status(200).send(result);
+        } else if (type) {
+            let result = await jokeDb.getJokeByType(type);
+            res.status(200).send(result);
+        }
+        else if (count) {
+            let result = await jokeDb.getJokeByCount(count);
+            res.status(200).send(result);
+        } else {
+            let result = await jokeDb.getAllJoke();
+            res.status(200).send(result);
+        }
+
     } catch (error) {
         res.status(500).send(`An error occurred. Message: ${error.message}`);
     }
@@ -55,49 +76,61 @@ app.delete('/jokes/:id', async (req, res) => {
     }
 });
 
-app.get('/jokes/categories', async (req, res) => {
-    try {
-        let result = await jokeDb.getAllCategories();
-        res.status(200).send(result);
-    } catch (error) {
-        res.status(500).send(`An error occurred. Message: ${error.message}`);
-    }
-});
-
-app.get('/jokes/categories/:id', async (req, res) => {
+app.get('/jokes/types/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        let result = await jokeDb.gettype(id);
+        let result = await jokeDb.getJokeByTypeId(id);
         res.status(200).send(result);
     } catch (error) {
         res.status(500).send(`An error occurred. Message: ${error.message}`);
     }
 });
 
-app.post('/jokes/categories', async (req, res) => {
+
+// types endpoints
+app.get('/types', async (req, res) => {
+    try {
+        let result = await jokeDb.getAllTypes();
+        res.status(200).send(result);
+    } catch (error) {
+        res.status(500).send(`An error occurred. Message: ${error.message}`);
+    }
+});
+
+app.get('/types/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        let result = await jokeDb.getType(id);
+        res.status(200).send(result);
+    } catch (error) {
+        res.status(500).send(`An error occurred. Message: ${error.message}`);
+    }
+});
+
+app.post('/types', async (req, res) => {
     const type = req.body;
     try {
-        let result = await jokeDb.inserttype(type);
+        let result = await jokeDb.insertType(type);
         res.status(201).send(result);
     } catch (error) {
         res.status(500).send(`An error occurred. Message: ${error.message}`);
     }
 });
 
-app.put('/jokes/categories', async (req, res) => {
+app.put('/types', async (req, res) => {
     const type = req.body;
     try {
-        let result = await jokeDb.updatetype(type);
+        let result = await jokeDb.updateType(type);
         res.status(200).send(result);
     } catch (error) {
         res.status(500).send(`An error occurred. Message: ${error.message}`);
     }
 });
 
-app.delete('/jokes/categories/:id', async (req, res) => {
+app.delete('/types/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        let result = await jokeDb.deletetype(id);
+        let result = await jokeDb.deleteType(id);
         res.status(200).send(result);
     } catch (error) {
         res.status(500).send(`An error occurred. Message: ${error.message}`);
