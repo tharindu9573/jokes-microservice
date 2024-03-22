@@ -4,7 +4,7 @@ services:
   analyze-service:
     image: analyze-service:1.0.0
     environment:
-      BASE_URL: '52.171.220.101' # analytics ip
+      BASE_URL: '10.1.0.4' # analytics ip
       MONGO_ROOT_PASSWORD: 'diamondback'
       MONGO_CONTAINER_PORT: 4302
       PORT: 3300
@@ -19,8 +19,8 @@ services:
   analytics-etl-service:
     image: etl-service:1.0.0
     environment:
-      BASE_URL: '52.171.220.101' # analytics ip
-      RMQ_URL: '20.186.39.3' # moderator ip
+      BASE_URL: '10.1.0.4' # analytics ip
+      RMQ_URL: '10.0.0.6' # moderator ip
       MONGO_ROOT_PASSWORD: 'diamondback'
       MONGO_CONTAINER_PORT: 4302
       MOD_CONTAINER_PORT: 4101

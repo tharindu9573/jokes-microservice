@@ -2,9 +2,9 @@ const scheme = require('./scheme');
 const mysql = require('mysql2');
 
 let connection = mysql.createConnection({
-    host: `${process.env.BASE_URL}`,
+    host: process.env.BASE_URL,
     user: 'root',
-    password: `${process.env.MYSQL_ROOT_PASSWORD}`,
+    password: process.env.MYSQL_ROOT_PASSWORD,
     port: process.env.MYSQL_CONTAINER_PORT
 });
 
@@ -14,9 +14,9 @@ function connectDb() {
         scheme.createScheme().then((res) => {
             if (res) {
                 connection = mysql.createConnection({
-                    host: `${process.env.BASE_URL}`,
+                    host: process.env.BASE_URL,
                     user: 'root',
-                    password: `${process.env.MYSQL_ROOT_PASSWORD}`,
+                    password: process.env.MYSQL_ROOT_PASSWORD,
                     database: 'Jokes',
                     port: process.env.MYSQL_CONTAINER_PORT
                 });

@@ -4,8 +4,8 @@ services:
   moderator-service:
     image: moderator-service:1.0.0
     environment:
-      RMQ_SUBMITTER_URL: '20.186.38.219' #submitter ip
-      RMQ_MODERATOR_URL: '20.186.39.3' #moderator ip
+      RMQ_SUBMITTER_URL: '10.0.0.5' #submitter ip
+      RMQ_MODERATOR_URL: '10.0.0.6' #moderator ip
       SM_QUEUE_NAME: 'SUBMITTED_JOKES_QUEUE'
       MOD_QUEUE_NAME: 'MODERATED_JOKES_QUEUE'
       AN_QUEUE_NAME: 'LOGGED_JOKES_QUEUE'

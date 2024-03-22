@@ -15,7 +15,7 @@ const port = process.env.PORT || 3200;
 
 app.use(cors());
 
-app.use('/submit', express.static(path.join(__dirname, 'public')))
+// app.use('/submit', express.static(path.join(__dirname, 'public')))
 app.use('/submit/index.html', express.static(path.join(__dirname, 'public')))
 
 app.use('/submit/docs', swaggerUi.serve, swaggerUi.setup(specs));

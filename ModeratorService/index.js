@@ -8,6 +8,7 @@ const cors = require('cors');
 const fs = require('fs').promises;
 const authenticateJWT = require('./middleware.js');
 
+const GW_URL = `http://${process.env.GW_URL}:${process.env.GW_PROT}`; // 80
 const rabbitMQUrl_Submitter = `amqp://${process.env.RMQ_SUBMITTER_URL}:${process.env.SM_CONTAINER_PORT}/`; //4201
 const rabbitMQUrl_Moderator = `amqp://${process.env.RMQ_MODERATOR_URL}:${process.env.MOD_CONTAINER_PORT}/`; //4101
 const subscribeQueue = process.env.SM_QUEUE_NAME;

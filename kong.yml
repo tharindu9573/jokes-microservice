@@ -2,68 +2,86 @@ _format_version: "3.0"
 _transform: true
 
 services:
-- host: httpbin.org
-  name: example_service
-  port: 8050
-  protocol: http
-  routes:
-  - name: example_route
-    paths:
-    - /mock
-    strip_path: true
+  - host: httpbin.org
+    name: example_service
+    port: 8050
+    protocol: http
+    routes:
+    - name: example_route
+      paths:
+      - /mock
+      strip_path: true
 
-- host: '52.170.117.195'
-  name: joke_service
-  port: 4000
-  protocol: http
-  path: "/"
-  routes:
-  - name: joke-route
-    paths:
-      - /jokes
-    preserve_host: false
-    strip_path: false
-  - name: type-route
-    paths:
-      - /types
-    preserve_host: false
-    strip_path: false
+  - host: '10.1.0.5'
+    name: joke_service
+    port: 4000
+    protocol: http
+    path: "/"
+    routes:
+    - name: joke-route
+      paths:
+        - /jokes
+      preserve_host: false
+      strip_path: false
+    - name: type-route
+      paths:
+        - /types
+      preserve_host: false
+      strip_path: false
 
-- host: '20.186.38.219'
-  name: submitter_service
-  port: 4200
-  protocol: http
-  path: /submit
-  routes:
-  - name: submitter-service
-    paths:
-    - /submit
-    strip_path: true
+  - host: '10.0.0.5'
+    name: submitter_service
+    port: 4200
+    protocol: http
+    routes:
+      - name: submitter-service-route
+        paths:
+          - /submit
+        strip_path: true
 
-- host: '20.186.39.3'
-  name: moderator_service
-  port: 4100
-  protocol: http
-  path: "/"
-  routes:
-  - name: moderator-route
-    paths:
-    - /moderator
-    preserve_host: false
-    strip_path: false
-  - name: login-route
-    paths:
-    - /login
-    preserve_host: false
-    strip_path: false
+  - host: '10.0.0.5'
+    name: submitter_service_rmq
+    port: 4202
+    protocol: http
+    routes:
+      - name: s-rmq-service-route
+        paths:
+          - /
+        strip_path: true
 
-- host: '52.171.220.101'
-  name: analytics_service
-  port: 4300
-  protocol: http
-  path: /logs
-  routes:
-  - name: analytics-service
-    paths:
-    - /logs
-    strip_path: true
+  - host: '10.0.0.6'
+    name: moderator_service
+    port: 4100
+    protocol: http
+    routes:
+    - name: moderator-route
+      paths:
+      - /moderator
+      preserve_host: false
+      strip_path: false
+    - name: login-route
+      paths:
+      - /login
+      preserve_host: false
+      strip_path: false
+
+  - host: '10.0.0.6'
+    name: moderator_service_rmq
+    port: 4102
+    protocol: http
+    routes:
+    - name: m-rmq-service
+      paths:
+      - /
+      strip_path: true
+
+  - host: '10.1.0.4'
+    name: analytics_service
+    port: 4300
+    protocol: http
+    path: /logs
+    routes:
+    - name: analytics-service
+      paths:
+      - /logs
+      strip_path: true

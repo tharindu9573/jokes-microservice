@@ -3,9 +3,9 @@ const mysql = require('mysql2');
 function createScheme() {
     return new Promise((resolve, reject) => {
         const connection = mysql.createConnection({
-            host: `${process.env.MYSQL_URL}`,
+            host: process.env.MYSQL_URL,
             user: 'root',
-            password: `${process.env.MYSQL_ROOT_PASSWORD}`,
+            password: process.env.MYSQL_ROOT_PASSWORD,
             // port: process.env.MYSQL_CONTAINER_PORT,
             multipleStatements: true
         });
@@ -32,7 +32,7 @@ function createScheme() {
                     console.log('Error occurred while creating the scheme:', err);
                     reject(false);
                 }
-                console.log("Database 'Jokes' and tables 'type' and 'joke' ensured");
+                console.log("Database 'Jokes' and tables 'moderator_joke' ensured");
                 connection.end();
                 resolve(true);
             });

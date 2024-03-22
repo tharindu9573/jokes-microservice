@@ -3,9 +3,9 @@ const mysql = require('mysql2');
 function createScheme() {
     return new Promise((resolve, reject) => {
         const connection = mysql.createConnection({
-            host: `${process.env.BASE_URL}`,
+            host: process.env.BASE_URL,
             user: 'root',
-            password: `${process.env.MYSQL_ROOT_PASSWORD}`,
+            password: process.env.MYSQL_ROOT_PASSWORD,
             port: process.env.MYSQL_CONTAINER_PORT,
             multipleStatements: true
         });
