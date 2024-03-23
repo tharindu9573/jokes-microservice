@@ -1,22 +1,24 @@
-const GW_URL = 'http://localhost:3000';
+const GW_URL = 'http://172.191.226.20:80';
+
+const jokeTypes = document.getElementById('jokeType');
+const jokeText = document.getElementById('jokeText');
+const jokePunchline = document.getElementById('jokePunchline');
+const jokeDisplay = document.getElementById('jokeDisplay');
+const anySelect = document.getElementById('anySelect');
+const noJokes = document.getElementById('noJokes');
+const noTypes = document.getElementById('noTypes');
+
 
 document.addEventListener('DOMContentLoaded', (event) => {
     loadTypes();
 
     document.getElementById('getJoke').addEventListener('click', onButtonClick);
-    document.getElementById('jokeType').addEventListener('click', function () {
+    jokeTypes.addEventListener('click', function () {
         loadTypes();
     });
 });
 
 function onButtonClick() {
-    const selectElement = document.getElementById('jokeType');
-    const jokeText = document.getElementById('jokeText');
-    const jokePunchline = document.getElementById('jokePunchline');
-    const jokeDisplay = document.getElementById('jokeDisplay');
-    const anySelect = document.getElementById('anySelect');
-    const noJokes = document.getElementById('noJokes');
-    const noTypes = document.getElementById('noTypes');
 
     noJokes.style.display = "none";
     noTypes.style.display = "none";
@@ -25,8 +27,8 @@ function onButtonClick() {
     jokeText.textContent = "";
     jokePunchline.textContent = "";
 
-    if (selectElement.value != 0) {
-        getJokeByType(selectElement.value).then((joke) => {
+    if (jokeTypes.value != 0) {
+        getJokeByType(jokeTypes.value).then((joke) => {
             if (joke) {
                 jokeDisplay.style.display = "block";
                 jokeText.textContent = joke.joke_text;
@@ -46,24 +48,19 @@ function onButtonClick() {
 }
 
 function loadTypes() {
-    const selectElement = document.getElementById('jokeType');
-    const noTypes = document.getElementById('noTypes');
-    const jokeDisplay = document.getElementById('jokeDisplay');
-    const anySelect = document.getElementById('anySelect');
-    const noJokes = document.getElementById('noJokes');
-    const selectType = selectElement.value;
+    const selectType = jokeTypes.value;
 
     getType().then((types) => {
         if (types.length > 0) {
             noTypes.style.display = "none";
             anySelect.style.display = "none";
 
-            selectElement.length = 1;
+            jokeTypes.length = 1;
             types.forEach(type => {
                 const option = new Option(type.name, type.id);
-                selectElement.add(option);
+                jokeTypes.add(option);
             });
-            selectElement.value = selectType;
+            jokeTypes.value = selectType;
         } else {
             noTypes.style.display = "block";
             jokeDisplay.style.display = "none";
@@ -83,7 +80,6 @@ async function getType() {
             return results
         }
     } catch (err) {
-        // console.error(`Error: ${err}`)
         return [];
     }
 }
@@ -98,7 +94,6 @@ async function getJokeByType(id) {
             return results
         }
     } catch (err) {
-        // console.error(`Error: ${err}`)
         return null;
     }
 }

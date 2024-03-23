@@ -4,81 +4,76 @@ let isJokeTextModified = false;
 let isJokePunchlineModified = false;
 let isButtonClicked = false;
 
+const jokeForm = document.getElementById('jokeForm');
+const jokeTypes = document.getElementById('jokeType');
+const errorJokeType = document.getElementById('errorJokeType');
+const jokeText = document.getElementById('jokeText');
+const errorJokeText = document.getElementById('errorJokeText');
+const jokePunchline = document.getElementById('jokePunchline');
+const errorJokePunchline = document.getElementById('errorJokePunchline');
+const submitNewJoke = document.getElementById('submitNewJoke');
 
 document.addEventListener('DOMContentLoaded', (event) => {
     loadTypes();
 
     document.getElementById('submitJoke').addEventListener('click', onButtonClick);
-    document.getElementById('jokeType').addEventListener('click', function () {
+    jokeTypes.addEventListener('click', function () {
         validateForm();
         loadTypes();
     });
-    document.getElementById('jokeText').addEventListener('input', function () {
+    jokeText.addEventListener('input', function () {
         isJokeTextModified = true;
         validateForm();
     });
-    document.getElementById('jokePunchline').addEventListener('input', function () {
+    jokePunchline.addEventListener('input', function () {
         isJokePunchlineModified = true;
         validateForm();
     });
-    document.getElementById('submitNewJoke').addEventListener('click', function () {
-        document.getElementById('submitNewJoke').style.display = "none";
-        document.getElementById('jokeForm').style.display = "flex";
+    submitNewJoke.addEventListener('click', function () {
+        submitNewJoke.style.display = "none";
+        jokeForm.style.display = "flex";
     });
 });
 
 function validateForm() {
-    console.log(isButtonClicked);
-    const selectElement = document.getElementById('jokeType');
-    const jokeText = document.getElementById('jokeText');
-    const jokePunchline = document.getElementById('jokePunchline');
-
-    if (selectElement.value == 0 && selectElement.length > 1) {
-        selectElement.style.borderColor = "red";
-        document.getElementById('errorJokeType').style.visibility = "visible";
+    if (jokeTypes.value == 0 && jokeTypes.length > 1) {
+        jokeTypes.style.borderColor = "red";
+        errorJokeType.style.visibility = "visible";
     } else {
-        selectElement.style.borderColor = "#333";
-        document.getElementById('errorJokeType').style.visibility = "hidden";
+        jokeTypes.style.borderColor = "#333";
+        errorJokeType.style.visibility = "hidden";
     }
 
     if ((jokeText.value == "" && isJokeTextModified) || isButtonClicked) {
         jokeText.style.borderColor = "red";
-        document.getElementById('errorJokeText').style.visibility = "visible";
+        errorJokeText.style.visibility = "visible";
     }
     else {
         jokeText.style.borderColor = "#333";
-        document.getElementById('errorJokeText').style.visibility = "hidden";
+        errorJokeText.style.visibility = "hidden";
     }
 
     if ((jokePunchline.value == "" && isJokePunchlineModified) || isButtonClicked) {
         jokePunchline.style.borderColor = "red";
-        document.getElementById('errorJokePunchline').style.visibility = "visible";
+        errorJokePunchline.style.visibility = "visible";
     }
     else {
         jokePunchline.style.borderColor = "#333";
-        document.getElementById('errorJokePunchline').style.visibility = "hidden";
+        errorJokePunchline.style.visibility = "hidden";
     }
-    console.log('22',isButtonClicked);
 }
 
 function onButtonClick() {
     isButtonClicked = true;
     validateForm();
 
-    const selectElement = document.getElementById('jokeType');
-    const jokeText = document.getElementById('jokeText');
-    const jokePunchline = document.getElementById('jokePunchline');
-
-    const submitNewJoke = document.getElementById('submitNewJoke');
-    const jokeForm = document.getElementById('jokeForm');
-
     const joke = {
-        type_id: selectElement.value, 
-        joke_text: jokeText.value, 
+        type_id: jokeTypes.value,
+        joke_text: jokeText.value,
         punch_line: jokePunchline.value
     }
-    
-    if (selectElement.value != 0 && jokeText.value != "" && jokePunchline.value != "") {
+
+    if (jokeTypes.value != 0 && jokeText.value != "" && jokePunchline.value != "") {
         submitJoke(joke).then((response) => {
             if (response) {
                 submitNewJoke.style.display = "block";
@@ -88,7 +83,7 @@ function onButtonClick() {
                 isButtonClicked = false;
                 jokeText.value = "";
                 jokePunchline.value = "";
-                selectElement.value = 0;
+                jokeTypes.value = 0;
             } else {
                 alert("Error occurred while submitting the joke. Please try again!!");
             }
@@ -99,12 +94,11 @@ function onButtonClick() {
 }
 
 function loadTypes() {
-    const selectElement = document.getElementById('jokeType');
     const noTypes = document.getElementById('noTypes');
     const text = document.getElementById('text');
     const punchline = document.getElementById('punchline');
     const submitJoke = document.getElementById('submitJoke');
-    const selectType = selectElement.value;
+    const selectType = jokeTypes.value;
 
 
     getType().then((types) => {
@@ -114,12 +108,12 @@ function loadTypes() {
             noTypes.style.display = "none";
             submitJoke.style.display = "block";
 
-            selectElement.length = 1;
+            jokeTypes.length = 1;
             types.forEach(type => {
                 const option = new Option(type.name, type.id);
-                selectElement.add(option);
+                jokeTypes.add(option);
             });
-            selectElement.value = selectType;
+            jokeTypes.value = selectType;
         } else {
             noTypes.style.display = "block";
             text.style.display = "none";
@@ -158,7 +152,6 @@ async function submitJoke(joke) {
         } else {
             return response;
         }
-
     } catch (err) {
         return null;
     }

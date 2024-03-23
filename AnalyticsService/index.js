@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoDb = require('./mongo-db');
+const SERVICE_NAME = process.env.SERVICE_NAME;
 
 const app = express();
 const port = process.env.PORT || 3300;
@@ -17,5 +18,5 @@ app.get('/logs', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`${SERVICE_NAME}, Server is running on port ${port}`);
 });

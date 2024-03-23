@@ -9,25 +9,51 @@
 </head>
 
 <body>
-    <div id="jokeCentral">
-        <h1>Moderate Joke</h1>
-        <div class="jokeSelector">
-            <label for="jokeType">Choose a joke type:</label>
-            <select id="jokeType" name="jokeType">
-                <option value="general">general</option>
-                <!-- More options can be added here -->
-            </select>
-            <button id="addJokeType">Add New Type</button>
+    <form id="loginForm">
+        <h1>Login</h1>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
         </div>
-        <div class="jokeInput">
-            <input type="text" id="jokeSetup" placeholder="Moderate the joke setup text">
-            <input type="text" id="jokePunchline" placeholder="Moderate the joke punchline">
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
         </div>
-        <div class="jokeActions">
-            <button id="submitJoke">Submit Joke</button>
-            <button id="deleteJoke">Delete Joke</button>
+        <button type="submit">Login</button>
+    </form>
+
+    <div id="moderateJokes">
+        <div class="from" id="moderateForm">
+            <h1>Moderate Joke</h1>
+            <div class="jokeSelector">
+                <label for="jokeType">Choose a joke type:</label>
+                <select id="jokeType" name="jokeType">
+                    <option value="0">Any</option>
+                </select>
+                <button id="addJokeType">Add New Type</button>
+            </div>
+            <p id="noTypes" class="noTypes">No joke types available at the moment</p>
+
+            <div id="jokeInput" class="jokeInput">
+                <input type="text" id="newJokeType" placeholder="Add new joke type">
+                <p id="errorNewJokeType">Please enter a joke type</p>
+
+                <input type="text" id="jokeText" placeholder="Moderate the joke setup text">
+                <p id="errorJokeText">Please enter a joke</p>
+
+                <input type="text" id="jokePunchline" placeholder="Moderate the joke punchline">
+                <p id="errorJokePunchline">Please enter a joke punchline</p>
+            </div>
+
+            <div id="jokeActions" class="jokeActions">
+                <button id="submitJoke">Submit Joke</button>
+                <button id="deleteJoke">Delete Joke</button>
+            </div>
+
         </div>
+        <button id="submitNewJoke" class="submitNewJoke">Submit Another Joke</button>
     </div>
+
     <script src="script.js"></script>
 </body>
 

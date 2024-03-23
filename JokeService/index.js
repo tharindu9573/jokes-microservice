@@ -4,6 +4,8 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
+
+const SERVICE_NAME = process.env.SERVICE_NAME;
 const port = process.env.PORT || 3000;
 
 app.use(cors());
@@ -138,6 +140,6 @@ app.delete('/types/:id', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`${SERVICE_NAME}, Server is running on port ${port}`);
 });
 

@@ -1,35 +1,43 @@
 const scheme = require('./scheme');
 const mysql = require('mysql2');
+const SERVICE_NAME = process.env.SERVICE_NAME;
 
 let connection = mysql.createConnection({
-    host: process.env.BASE_URL,
+    host: process.env.BASE_URL || 'localhost',
     user: 'root',
     password: process.env.MYSQL_ROOT_PASSWORD,
-    port: process.env.MYSQL_CONTAINER_PORT
+    port: process.env.MYSQL_CONTAINER_PORT || 3306
 });
 
 
 function connectDb() {
     setTimeout(() => {
-        scheme.createScheme().then((res) => {
-            if (res) {
-                connection = mysql.createConnection({
-                    host: process.env.BASE_URL,
-                    user: 'root',
-                    password: process.env.MYSQL_ROOT_PASSWORD,
-                    database: 'Jokes',
-                    port: process.env.MYSQL_CONTAINER_PORT
-                });
+        try {
+            scheme.createScheme().then((res) => {
+                if (res) {
+                    connection = mysql.createConnection({
+                        host: process.env.BASE_URL || 'localhost',
+                        user: 'root',
+                        password: process.env.MYSQL_ROOT_PASSWORD,
+                        database: 'Jokes',
+                        port: process.env.MYSQL_CONTAINER_PORT || 3306
+                    });
 
-                connection.connect(err => {
-                    if (err) {
-                        console.log(err.message);
-                    } else {
-                        console.log('JOKE SERVICE: Connected to MySQL database');
-                    }
-                });
-            }
-        });
+                    connection.connect(err => {
+                        if (err) {
+                            console.error(`${SERVICE_NAME}, Error connecting to MySQL. Error: `, err.message);
+                        } else {
+                            console.log(`${SERVICE_NAME}, Connected to MySQL database`);
+                        }
+                    });
+                }
+            });
+        }
+        catch (err) {
+            console.error(`${SERVICE_NAME}, Error: `, err.message);
+            console.log(`${SERVICE_NAME}, Attempting to reconnect to MySQL...`);
+            connectDb();
+        }
     }, 45 * 1000);
 }
 
@@ -39,7 +47,7 @@ connectDb();
 
 async function insertJoke({ type_id, joke_text, punch_line }) {
     return new Promise((resolve, reject) => {
-        connection.query('INSERT INTO joke (joke_text, punch_line, type_id, is_deleted) VALUES (?, ?, ?)', [joke_text, punch_line, type_id, false], (err, result) => {
+        connection.query('INSERT INTO joke (joke_text, punch_line, type_id, is_deleted) VALUES (?, ?, ?, ?)', [joke_text, punch_line, type_id, false], (err, result) => {
             if (err) {
                 reject(err);
             } else {
@@ -153,20 +161,36 @@ async function getJokeByType(type) {
 }
 
 async function insertType({ name }) {
-    return new Promise((resolve, reject) => {
-        connection.query('INSERT INTO type (name) VALUES (?)', name, (err, result) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
+    let type = await getTypeByName(name);
+    if (!type)
+        return new Promise((resolve, reject) => {
+            connection.query('INSERT INTO type (name) VALUES (?)', name, (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
         });
-    });
+
+    return new Promise((resolve, reject) => { resolve({ 'insertId': type.id }); });
 }
 
 async function getType(id) {
     return new Promise((resolve, reject) => {
         connection.query('SELECT * FROM type WHERE Id = ? AND is_deleted = ? LIMIT 0, 1', [id, false], (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result[0]);
+            }
+        });
+    });
+}
+
+async function getTypeByName(name) {
+    return new Promise((resolve, reject) => {
+        connection.query('SELECT * FROM type WHERE LOWER(name) = ? AND is_deleted = ? LIMIT 0, 1', [name, false], (err, result) => {
             if (err) {
                 reject(err);
             } else {

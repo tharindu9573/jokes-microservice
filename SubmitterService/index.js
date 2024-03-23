@@ -12,6 +12,7 @@ const GW_URL = `http://${process.env.GW_URL}:${process.env.GW_PORT}`; // 80
 const rabbitMQUrl = `amqp://${process.env.BASE_URL}:${process.env.SM_CONTAINER_PORT}/`; //4201
 const queueName = process.env.SM_QUEUE_NAME;
 const port = process.env.PORT || 3200;
+const SERVICE_NAME = process.env.SERVICE_NAME;
 
 app.use(cors());
 
@@ -63,7 +64,7 @@ app.post('/submit', (req, res) => {
         let { type_id, joke_text, punch_line } = req.body;
         let jsonMessage = JSON.stringify({ type_id, joke_text, punch_line });
         sendToQueue(jsonMessage);
-        res.status(201).send("Joke was submitted");
+        res.status(201).send({ "result": "Joke was submitted" });
     } catch (error) {
         res.status(500).send(`An error was occurred while submitting the joke. Error: ${error.message}`);
     }
@@ -119,7 +120,7 @@ app.get('/submit/types', async (req, res) => {
         if (types.length > 0) {
             res.status(200).send(types);
         } else {
-            res.status(500).send(`An error was occurred while retrieving types. Error: ${error.message}`);
+            res.status(500).send({ "result": `An error was occurred while retrieving types. Error: ${error.message}` });
         }
     }
 });
@@ -131,11 +132,11 @@ async function sendToQueue(message) {
         const channel = await connection.createChannel();
         await channel.assertQueue(queueName, { durable: true });
         await channel.sendToQueue(queueName, Buffer.from(message));
-        console.log(`Message sent to queue: ${queueName}, message: ${message}`);
+        console.log(`${SERVICE_NAME}, Message sent to queue: ${queueName}, message: ${message}`);
         await channel.close();
         await connection.close();
     } catch (error) {
-        console.error(`Error sending message to RabbitMQ: ${queueName}, Error: `, error);
+        console.error(`${SERVICE_NAME}, Error sending message to RabbitMQ: ${queueName}, Error: `, error);
     }
 }
 
@@ -143,7 +144,7 @@ function writeToFile(data) {
     const filePth = path.join(__dirname, 'backup', 'types.json');
     fs.writeFile(filePth, JSON.stringify(data, null, 2), (err) => {
         if (err) {
-            console.error('Error writing file:', err);
+            console.error(`${SERVICE_NAME}, Error writing file:`, err);
         }
     });
 }
@@ -154,11 +155,11 @@ async function readFromFile() {
         const data = await fs.readFile(filePath, 'utf8');
         return JSON.parse(data);
     } catch (err) {
-        console.error('Error reading file:', err);
+        console.error(`${SERVICE_NAME}, Error reading file:`, err);
         return [];
     }
 }
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`${SERVICE_NAME}, Server is running on port ${port}`);
 });

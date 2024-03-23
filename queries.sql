@@ -13,12 +13,10 @@ CREATE TABLE joke (
     FOREIGN KEY (type_id) REFERENCES type(id)
 );
 
-CREATE TABLE moderator_joke (
+CREATE TABLE moderate_joke (
     id INT AUTO_INCREMENT PRIMARY KEY,
     joke_text TEXT,
     type_id INT,
     punch_line TEXT,
     is_approved BOOLEAN DEFAULT FALSE
 );
-
-    FOREIGN KEY (category_id) REFERENCES category(id)

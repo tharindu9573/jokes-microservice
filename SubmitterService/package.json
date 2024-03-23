@@ -1,7 +1,7 @@
 {
   "name": "jokes",
   "version": "1.0.0",
-  "description": "Submitter Service",
+  "description": "Submit Service",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
