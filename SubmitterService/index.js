@@ -15,7 +15,7 @@ const port = process.env.PORT || 3200;
 
 app.use(cors());
 
-// app.use('/submit', express.static(path.join(__dirname, 'public')))
+app.use('/submit', express.static(path.join(__dirname, 'public')))
 app.use('/submit/index.html', express.static(path.join(__dirname, 'public')))
 
 app.use('/submit/docs', swaggerUi.serve, swaggerUi.setup(specs));
@@ -110,7 +110,8 @@ app.post('/submit', (req, res) => {
  */
 app.get('/submit/types', async (req, res) => {
     try {
-        const response = await axios.get(`${GW_URL}/type`)
+        let url = 'http://172.191.226.20:80';
+        const response = await axios.get(`${GW_URL}/types`)
         writeToFile(response.data);
         res.status(200).send(await response.data);
     } catch (error) {
@@ -131,11 +132,11 @@ async function sendToQueue(message) {
         const channel = await connection.createChannel();
         await channel.assertQueue(queueName, { durable: true });
         await channel.sendToQueue(queueName, Buffer.from(message));
-        console.log(`Message sent to queue: ${message}`);
+        console.log(`Message sent to queue: ${queueName}, message: ${message}`);
         await channel.close();
         await connection.close();
     } catch (error) {
-        console.error('Error sending message to RabbitMQ:', error);
+        console.error(`Error sending message to RabbitMQ: ${queueName}, Error: `, error);
     }
 }
 

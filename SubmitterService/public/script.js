@@ -2,6 +2,7 @@ const GW_URL = 'http://172.191.226.20:80';
 
 let isJokeTextModified = false;
 let isJokePunchlineModified = false;
+let isButtonClicked = false;
 
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -19,44 +20,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('jokePunchline').addEventListener('input', function () {
         isJokePunchlineModified = true;
         validateForm();
-    });      
+    });
+    document.getElementById('submitNewJoke').addEventListener('click', function () {
+        document.getElementById('submitNewJoke').style.display = "none";
+        document.getElementById('jokeForm').style.display = "flex";
+    });
 });
 
-function onButtonClick() {
-    const selectElement = document.getElementById('jokeType');
-    const jokeText = document.getElementById('jokeText');
-    const jokePunchline = document.getElementById('jokePunchline');
-
-    const submitNewJoke = document.getElementById('submitNewJoke');
-    const jokeForm = document.getElementById('jokeForm');
-
-    const joke = {
-        category_id: selectElement.value,
-        joke_text: jokeText.value, // add the punchline also
-    }
-
-    validateForm();
-
-    if (selectElement.value != 0 && jokeText.value != "" && jokePunchline.value != "") {
-        submitJoke(joke).then((response) => {
-            if (response) {
-                jokeText.value = "";
-                jokePunchline.value = "";
-                selectElement.value = 0;
-                submitNewJoke.style.display = "none";
-                jokeForm.style.display = "block";
-                isJokeTextModified = false;
-                isJokePunchlineModified = false;
-            } else {
-                alert("Error occurred while submitting the joke. Please try again!!");
-            }
-        });
-
-    }
-
-}
-
 function validateForm() {
+    console.log(isButtonClicked);
     const selectElement = document.getElementById('jokeType');
     const jokeText = document.getElementById('jokeText');
     const jokePunchline = document.getElementById('jokePunchline');
@@ -69,7 +41,7 @@ function validateForm() {
         document.getElementById('errorJokeType').style.visibility = "hidden";
     }
 
-    if (jokeText.value == "" && isJokeTextModified) {
+    if ((jokeText.value == "" && isJokeTextModified) || isButtonClicked) {
         jokeText.style.borderColor = "red";
         document.getElementById('errorJokeText').style.visibility = "visible";
     }
@@ -78,7 +50,7 @@ function validateForm() {
         document.getElementById('errorJokeText').style.visibility = "hidden";
     }
 
-    if (jokePunchline.value == "" && isJokePunchlineModified) {
+    if ((jokePunchline.value == "" && isJokePunchlineModified) || isButtonClicked) {
         jokePunchline.style.borderColor = "red";
         document.getElementById('errorJokePunchline').style.visibility = "visible";
     }
@@ -86,6 +58,43 @@ function validateForm() {
         jokePunchline.style.borderColor = "#333";
         document.getElementById('errorJokePunchline').style.visibility = "hidden";
     }
+    console.log('22',isButtonClicked);
+}
+
+function onButtonClick() {
+    isButtonClicked = true;
+    validateForm();
+
+    const selectElement = document.getElementById('jokeType');
+    const jokeText = document.getElementById('jokeText');
+    const jokePunchline = document.getElementById('jokePunchline');
+
+    const submitNewJoke = document.getElementById('submitNewJoke');
+    const jokeForm = document.getElementById('jokeForm');
+
+    const joke = {
+        category_id: selectElement.value,
+        joke_text: jokeText.value, // add the punchline also
+    }
+    
+    if (selectElement.value != 0 && jokeText.value != "" && jokePunchline.value != "") {
+        submitJoke(joke).then((response) => {
+            if (response) {
+                submitNewJoke.style.display = "block";
+                jokeForm.style.display = "none";
+                isJokeTextModified = false;
+                isJokePunchlineModified = false;
+                isButtonClicked = false;
+                jokeText.value = "";
+                jokePunchline.value = "";
+                selectElement.value = 0;
+            } else {
+                alert("Error occurred while submitting the joke. Please try again!!");
+            }
+        });
+    }
+    isButtonClicked = false;
+    validateForm();
 }
 
 function loadTypes() {
