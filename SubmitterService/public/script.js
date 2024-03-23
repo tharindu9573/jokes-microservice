@@ -73,8 +73,9 @@ function onButtonClick() {
     const jokeForm = document.getElementById('jokeForm');
 
     const joke = {
-        category_id: selectElement.value,
-        joke_text: jokeText.value, // add the punchline also
+        type_id: selectElement.value, 
+        joke_text: jokeText.value, 
+        punch_line: jokePunchline.value
     }
     
     if (selectElement.value != 0 && jokeText.value != "" && jokePunchline.value != "") {
@@ -102,6 +103,7 @@ function loadTypes() {
     const noTypes = document.getElementById('noTypes');
     const text = document.getElementById('text');
     const punchline = document.getElementById('punchline');
+    const submitJoke = document.getElementById('submitJoke');
     const selectType = selectElement.value;
 
 
@@ -110,6 +112,7 @@ function loadTypes() {
             text.style.display = "block";
             punchline.style.display = "block";
             noTypes.style.display = "none";
+            submitJoke.style.display = "block";
 
             selectElement.length = 1;
             types.forEach(type => {
@@ -121,6 +124,7 @@ function loadTypes() {
             noTypes.style.display = "block";
             text.style.display = "none";
             punchline.style.display = "none";
+            submitJoke.style.display = "none";
         }
     });
 }

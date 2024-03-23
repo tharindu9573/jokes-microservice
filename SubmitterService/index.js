@@ -8,7 +8,7 @@ const axios = require('axios')
 const cors = require('cors');
 const fs = require('fs').promises;
 
-const GW_URL = `http://${process.env.GW_URL}:${process.env.GW_PROT}`; // 80
+const GW_URL = `http://${process.env.GW_URL}:${process.env.GW_PORT}`; // 80
 const rabbitMQUrl = `amqp://${process.env.BASE_URL}:${process.env.SM_CONTAINER_PORT}/`; //4201
 const queueName = process.env.SM_QUEUE_NAME;
 const port = process.env.PORT || 3200;
@@ -110,7 +110,6 @@ app.post('/submit', (req, res) => {
  */
 app.get('/submit/types', async (req, res) => {
     try {
-        let url = 'http://172.191.226.20:80';
         const response = await axios.get(`${GW_URL}/types`)
         writeToFile(response.data);
         res.status(200).send(await response.data);
